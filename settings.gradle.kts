@@ -1,0 +1,1 @@
+rootProject.name = "asn1-gradle-plugin"
