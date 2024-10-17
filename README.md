@@ -1,4 +1,5 @@
-# Gradle plugin base on Java ASN.1 BER and DER encoding/decoding
+# ASN.1 Gradle Compiler Plugin
+Gradle plugin base on Java ASN.1 BER and DER encoding/decoding
 
 Using the plugins DSL:
 ```
