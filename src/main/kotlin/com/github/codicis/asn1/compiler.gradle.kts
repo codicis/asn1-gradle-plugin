@@ -52,8 +52,8 @@ abstract class Asn1CompileTask : JavaExec() {
      * Property representing the input ASN.1 file to be compiled.
      * This property is marked as an input file for Gradle up-to-date checks.
      */
-    @get:InputFile
-    abstract val inputFile: RegularFileProperty
+    @get:InputFiles
+    abstract val files: ListProperty<RegularFile>
 
     /**
      * Property representing the output directory for the generated Java classes.
@@ -84,14 +84,19 @@ abstract class Asn1CompileTask : JavaExec() {
      */
     override fun exec() {
         // Construct a list of command-line arguments for the ASN.1 compiler
-        args = listOf(
-            "-f",
-            inputFile.get().toString(),
-            "-o", outputDirectory.get().toString(), // Output directory for generated Java classes
-            "-p",
-            packageName.get(),
-            "-e"
+        val params = mutableListOf<String>()
+        params.add("-f")
+        files.get().forEach { file ->
+            params.add(file.toString())
+        }
+        params.addAll(
+            listOf(
+                "-o", outputDirectory.get().toString(), // Output directory for generated Java classes
+                "-p", packageName.get(),
+                "-e"
+            )
         )
+        args(params)
         super.exec()
     }
 }

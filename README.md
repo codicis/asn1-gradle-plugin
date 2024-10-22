@@ -16,6 +16,21 @@ asn1 {
 }
 ````
 
+Configure the asn1Compile task like this:
+````
+tasks {
+    asn1Compile {
+        packageName = "com.github.codicis.pulse.data.gsma"
+        files = listOf(
+            project.layout.projectDirectory.file("src/main/resources/example1.asn"),
+            project.layout.projectDirectory.file("src/main/resources/example2.asn")
+        )
+    }
+    compileJava {
+        dependsOn(asn1Compile)
+    }
+}
+````
 
 ### Additional Links
 For further reference, please consider the following sections:
