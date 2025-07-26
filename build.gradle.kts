@@ -1,6 +1,7 @@
 plugins {
     `kotlin-dsl`
-    `maven-publish`    
+    `maven-publish`
+    id("com.gradle.plugin-publish") version "1.3.1"
 }
 repositories {
     mavenCentral()
@@ -20,10 +21,14 @@ tasks.test {
 }
 
 gradlePlugin {
+    website.set("https://github.com/codicis/asn1-gradle-plugin")
+    vcsUrl.set("https://github.com/codicis/asn1-gradle-plugin")
     plugins {
         create("asn1") {
-            id = "com.github.codicis.asn1"
-            implementationClass = "com.github.codicis.asn1.Asn1CompilerPlugin"
+            id = "io.github.codicis.asn1"
+            implementationClass = "io.github.codicis.asn1.Asn1CompilerPlugin"
+            displayName = "Gradle ASN1 compiler plugin"
+            tags.set(listOf("asn1", "compiler", "gradle", "java", "plugin"))
         }
     }
 }

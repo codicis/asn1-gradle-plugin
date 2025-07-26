@@ -1,10 +1,11 @@
-package com.github.codicis.asn1
+package io.github.codicis.asn1
 
+import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.create
 
-class Asn1CompilerPlugin : org.gradle.api.Plugin<Project> {
+class Asn1CompilerPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.pluginManager.withPlugin("java") {

@@ -1,4 +1,4 @@
-package com.github.codicis.asn1
+package io.github.codicis.asn1
 
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty

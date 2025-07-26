@@ -1,4 +1,4 @@
-package com.github.codicis.asn1
+package io.github.codicis.asn1
 
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
@@ -22,7 +22,7 @@ class Asn1CompilerPluginTest {
             """
             plugins {
                 id("java")
-                id("com.github.codicis.asn1")
+                id("io.github.codicis.asn1")
             }
             repositories {
                 mavenCentral()

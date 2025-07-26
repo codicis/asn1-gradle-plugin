@@ -1,4 +1,4 @@
-package com.github.codicis.asn1
+package io.github.codicis.asn1
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
@@ -6,6 +6,7 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
+import org.gradle.process.JavaExecSpec
 import javax.inject.Inject
 
 /**
