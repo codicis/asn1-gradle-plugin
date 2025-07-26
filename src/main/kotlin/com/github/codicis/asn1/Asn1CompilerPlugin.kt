@@ -2,7 +2,6 @@ package com.github.codicis.asn1
 
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.create
-import org.gradle.kotlin.dsl.creating
 
 class Asn1CompilerPlugin : org.gradle.api.Plugin<Project> {
 
@@ -11,15 +10,25 @@ class Asn1CompilerPlugin : org.gradle.api.Plugin<Project> {
 
             val extension = target.extensions.create<Asn1CompilerPluginExtension>("asn1")
 
-            target.tasks.register("compileAsn1", Asn1CompileTask::class.java) {
+            // Apply the default convention for the version property
+            extension.version.convention("1.14.0")
+
+            target.tasks.register("asn1Compile", Asn1CompileTask::class.java) {
                 group = "build"
                 description = "Compile ASN.1 definitions into Java classes"
             }
 
-            target.configurations.creating {
+            // Register the custom configuration
+            val asn1Configuration = target.configurations.create("asn1Compiler") {
+                isVisible = true
+                isTransitive = true
+                description = "Configuration for ASN.1 compiler dependencies"
+
+                // Inherit from compileClasspath
                 extendsFrom(target.configurations.getByName("compileClasspath"))
             }
-            target.dependencies.add("asn1bean", "com.beanit:asn1bean-compiler:${extension.version.get()}")
+
+            target.dependencies.add("asn1Compiler", "com.beanit:asn1bean-compiler:${extension.version.get()}")
         }
         //sourceSets {
         //    main {

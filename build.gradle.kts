@@ -9,6 +9,25 @@ repositories {
 group = "com.github.codicis"
 version = "0.2"
 
+dependencies {
+    testImplementation(gradleTestKit())
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.3")
+    testImplementation(kotlin("test"))
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+gradlePlugin {
+    plugins {
+        create("asn1") {
+            id = "com.github.codicis.asn1"
+            implementationClass = "com.github.codicis.asn1.Asn1CompilerPlugin"
+        }
+    }
+}
+
 publishing {
     repositories {
         maven {
