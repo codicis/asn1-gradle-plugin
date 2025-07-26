@@ -29,7 +29,7 @@ gradlePlugin {
             implementationClass = "io.github.codicis.asn1.Asn1CompilerPlugin"
             displayName = "Gradle ASN1 compiler plugin"
             description = "This plugin provides a task for compiling ASN.1 definitions into Java classes."
-            tags.set(listOf("asn1", "compiler", "gradle", "java", "plugin"))
+            tags.set(listOf("asn1", "compiler", "java"))
         }
     }
 }
