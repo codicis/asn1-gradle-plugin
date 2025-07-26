@@ -8,7 +8,7 @@ Add the plugin using the **plugins DSL** in your `build.gradle.kts`:
 
 ```kotlin
 plugins {
-    id("com.github.codicis.asn1.compiler") version "0.1"
+    id("io.github.codicis.asn1") version "0.1"
 }
 ```
 
