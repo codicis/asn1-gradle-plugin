@@ -2,14 +2,14 @@
 Gradle plugin base on Java ASN.1 BER and DER encoding/decoding
 
 Using the plugins DSL:
-```
+```kotlin
 plugins {
   id("com.github.codicis.asn1.compiler") version "0.1"
 }
 ````
 
 Configure the plugin using the "asn1" extension like this:
-````
+````kotlin
 asn1 {
     // Set asn1bean compiler version properties here...
     version = "1.14.0"
