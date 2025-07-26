@@ -1,39 +1,13 @@
 package com.github.codicis.asn1
 
-import org.gradle.kotlin.dsl.invoke
-
-plugins {
-    id("java")
-}
-
-/**
- * This interface represents an extension object for the ASN1 compiler plugin.
- * It provides a way to configure the version of the ASN1 compiler used in the build.
- */
-interface Asn1CompilerPluginExtension {
-
-    /**
-     * Property to hold the version of the ASN1 compiler.
-     * The default value is set to "1.14.0".
-     *
-     * @return a {@link Property} of type {@link String} representing the version of the ASN1 compiler.
-     */
-    val version: Property<String>
-}
-// Add the 'greeting' extension object to project
-val extension = project.extensions.create<Asn1CompilerPluginExtension>("asn1")
-
-// Set a default value for 'message'
-extension.version.convention("1.14.0")
-
-val asn1bean: Configuration by configurations.creating {
-    extendsFrom(configurations.compileClasspath.get())
-}
-
-dependencies {
-    asn1bean("com.beanit:asn1bean-compiler:${extension.version.get()}")
-}
-
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.RegularFile
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputFiles
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.OutputDirectory
 
 /**
  * This class represents a custom Gradle task for compiling ASN.1 definitions into Java classes.
@@ -71,7 +45,7 @@ abstract class Asn1CompileTask : JavaExec() {
         group = "build"
         description = "The compiler reads the ASN.1 definitions from the given files and " +
                 "generates corresponding Java classes that can be used to conveniently encode and decode BER data."
-        mainClass = "com.beanit.asn1bean.compiler.Compiler"
+        this.mainClass.set("com.beanit.asn1bean.compiler.Compiler")
     }
 
     /**
@@ -98,22 +72,5 @@ abstract class Asn1CompileTask : JavaExec() {
         )
         args(params)
         super.exec()
-    }
-}
-
-val asn1Compile = tasks.register<Asn1CompileTask>("asn1Compile") {
-    classpath = asn1bean
-}
-
-sourceSets {
-    main {
-        java {
-            srcDir("build/generated/sources/${asn1Compile.name}/main/java")
-        }
-    }
-    test {
-        java {
-            srcDir("build/generated/sources/${asn1Compile.name}/main/java")
-        }
     }
 }
