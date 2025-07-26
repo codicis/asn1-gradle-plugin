@@ -1,5 +1,7 @@
 package com.github.codicis.asn1
 
+import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.provider.Property
 
 /**
@@ -15,4 +17,16 @@ interface Asn1CompilerPluginExtension {
      * @return a {@link Property} of type {@link String} representing the version of the ASN1 compiler.
      */
     val version: Property<String>
+
+    /** ASN.1 input files to compile. */
+    val sourceFiles: ConfigurableFileCollection
+
+    /** The output directory for generated Java files. */
+    val outputDirectory: DirectoryProperty
+
+    /** The classpath containing the ASN.1 compiler. */
+    val compilerClasspath: ConfigurableFileCollection
+
+    /** Java package name for generated classes. */
+    val packageName: Property<String>
 }

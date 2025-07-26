@@ -1,46 +1,55 @@
 package com.github.codicis.asn1
 
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.kotlin.dsl.create
 
 class Asn1CompilerPlugin : org.gradle.api.Plugin<Project> {
 
-    override fun apply(target: Project) {
-        target.pluginManager.withPlugin("java") {
+    override fun apply(project: Project) {
+        project.pluginManager.withPlugin("java") {
 
-            val extension = target.extensions.create<Asn1CompilerPluginExtension>("asn1")
+            // Create the extension
+            val extension = project.extensions.create<DefaultAsn1CompilerPluginExtension>("asn1")
 
-            // Apply the default convention for the version property
-            extension.version.convention("1.14.0")
+            // Define custom configuration for the compiler
+            val compilerConfiguration = project.configurations.create("asn1Compiler") {
+                description = "Configuration for ASN.1 compiler dependencies"
+                isCanBeResolved = true
+                isCanBeConsumed = false
+                extendsFrom(project.configurations.getByName("compileClasspath"))
+            }
 
-            target.tasks.register("asn1Compile", Asn1CompileTask::class.java) {
+            // Add compiler dependency dynamically
+            project.afterEvaluate {
+                project.dependencies.add(
+                    "asn1Compiler",
+                    "com.beanit:asn1bean-compiler:${extension.version.get()}"
+                )
+            }
+
+            // Register the compilation task
+            val compileTask = project.tasks.register("asn1Compile", Asn1CompileTask::class.java) {
                 group = "build"
                 description = "Compile ASN.1 definitions into Java classes"
+
+                packageName.set(extension.packageName)
+                sourceFiles.setFrom(extension.sourceFiles)
+                outputDirectory.set(extension.outputDirectory)
+                compilerClasspath.setFrom(compilerConfiguration)
             }
 
-            // Register the custom configuration
-            val asn1Configuration = target.configurations.create("asn1Compiler") {
-                isVisible = true
-                isTransitive = true
-                description = "Configuration for ASN.1 compiler dependencies"
-
-                // Inherit from compileClasspath
-                extendsFrom(target.configurations.getByName("compileClasspath"))
+            // Register generated sources and link them to the main source set
+            project.afterEvaluate {
+                val outputDir = compileTask.get().outputDirectory.get().asFile
+                val sourceSets = project.extensions.getByType(SourceSetContainer::class.java)
+                sourceSets.named("main") {
+                    java.srcDir(outputDir)
+                }
+                project.tasks.named("compileJava") {
+                    dependsOn(compileTask)
+                }
             }
-
-            target.dependencies.add("asn1Compiler", "com.beanit:asn1bean-compiler:${extension.version.get()}")
         }
-        //sourceSets {
-        //    main {
-        //        java {
-        //            srcDir("build/generated/sources/${asn1Compile.name}/main/java")
-        //        }
-        //    }
-        //    test {
-        //        java {
-        //            srcDir("build/generated/sources/${asn1Compile.name}/main/java")
-        //        }
-        //    }
-        //}
     }
 }

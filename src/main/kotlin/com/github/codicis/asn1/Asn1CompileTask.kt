@@ -1,19 +1,18 @@
 package com.github.codicis.asn1
 
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.file.RegularFile
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFiles
-import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.*
+import org.gradle.process.ExecOperations
+import javax.inject.Inject
 
 /**
  * This class represents a custom Gradle task for compiling ASN.1 definitions into Java classes.
  * It extends the JavaExec class and provides configuration options for the ASN.1 compiler.
  */
-abstract class Asn1CompileTask : JavaExec() {
+abstract class Asn1CompileTask : DefaultTask() {
 
     /**
      * Property representing the package name for the generated Java classes.
@@ -27,7 +26,7 @@ abstract class Asn1CompileTask : JavaExec() {
      * This property is marked as an input file for Gradle up-to-date checks.
      */
     @get:InputFiles
-    abstract val files: ListProperty<RegularFile>
+    abstract val sourceFiles: ConfigurableFileCollection
 
     /**
      * Property representing the output directory for the generated Java classes.
@@ -38,6 +37,12 @@ abstract class Asn1CompileTask : JavaExec() {
     val outputDirectory: DirectoryProperty = project.objects.directoryProperty()
         .convention(project.layout.buildDirectory.dir("generated/sources/${name}/main/java"))
 
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
+    @get:Classpath
+    abstract val compilerClasspath: ConfigurableFileCollection
+
     /**
      * Initializes the task with static configuration: inputs and outputs.
      */
@@ -45,32 +50,24 @@ abstract class Asn1CompileTask : JavaExec() {
         group = "build"
         description = "The compiler reads the ASN.1 definitions from the given files and " +
                 "generates corresponding Java classes that can be used to conveniently encode and decode BER data."
-        this.mainClass.set("com.beanit.asn1bean.compiler.Compiler")
     }
 
-    /**
-     * Overrides the exec method to set the arguments for the ASN.1 compiler.
-     * This method is responsible for preparing the command-line arguments for the ASN.1 compiler.
-     * It retrieves the input file, output directory, package name, and other necessary parameters
-     * and constructs a list of arguments to be passed to the compiler.
-     *
-     * @see JavaExec#exec()
-     */
-    override fun exec() {
-        // Construct a list of command-line arguments for the ASN.1 compiler
-        val params = mutableListOf<String>()
-        params.add("-f")
-        files.get().forEach { file ->
-            params.add(file.toString())
+    @TaskAction
+    fun compile() {
+        val outputDir = outputDirectory.get().asFile
+        outputDir.mkdirs()
+
+        sourceFiles.files.forEach { asn1File ->
+            logger.lifecycle("Compiling ASN.1 file: ${asn1File.name}")
+            execOperations.javaexec {
+                classpath = compilerClasspath
+                mainClass.set("com.beanit.asn1bean.compiler.Compiler")
+                args("-o", outputDir.absolutePath,
+                    "-p", packageName.get(),
+                    "-e",
+                    "-f", asn1File.absolutePath
+                )
+            }
         }
-        params.addAll(
-            listOf(
-                "-o", outputDirectory.get().toString(), // Output directory for generated Java classes
-                "-p", packageName.get(),
-                "-e"
-            )
-        )
-        args(params)
-        super.exec()
     }
 }

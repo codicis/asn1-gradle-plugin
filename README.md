@@ -13,22 +13,10 @@ Configure the plugin using the "asn1" extension like this:
 asn1 {
     // Set asn1bean compiler version properties here...
     version = "1.14.0"
-}
-````
-
-Configure the asn1Compile task like this:
-````
-tasks {
-    asn1Compile {
-        packageName = "com.github.codicis.pulse.data.gsma"
-        files = listOf(
-            project.layout.projectDirectory.file("src/main/resources/example1.asn"),
-            project.layout.projectDirectory.file("src/main/resources/example2.asn")
-        )
-    }
-    compileJava {
-        dependsOn(asn1Compile)
-    }
+    packageName.set("com.example.generated")
+    sourceFiles.setFrom(fileTree("src/main/asn1"))
+    compilerClasspath.setFrom(files("libs/asn1bean-compiler-${version.get()}.jar"))
+    outputDirectory.set(layout.buildDirectory.dir("generated/asn1"))
 }
 ````
 
