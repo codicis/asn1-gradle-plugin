@@ -7,7 +7,7 @@ repositories {
     mavenCentral()
 }
 
-group = "com.github.codicis"
+group = "iot.github.codicis"
 version = "0.1"
 
 dependencies {
