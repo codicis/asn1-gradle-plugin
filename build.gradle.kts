@@ -8,7 +8,7 @@ repositories {
 }
 
 group = "io.github.codicis"
-version = "0.2"
+version = "0.2.0"
 
 dependencies {
     testImplementation(gradleTestKit())
@@ -30,19 +30,6 @@ gradlePlugin {
             displayName = "Gradle ASN1 compiler plugin"
             description = "This plugin provides a task for compiling ASN.1 definitions into Java classes."
             tags.set(listOf("asn1", "compiler", "java"))
-        }
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/codicis/asn1-gradle-plugin")
-            credentials {
-                username = System.getenv("USERNAME")
-                password = System.getenv("TOKEN")
-            }
         }
     }
 }

@@ -38,9 +38,9 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
 
-    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
+    # The USERNAME and TOKEN need to correspond to the credential environment variables used in
     # the publishing section of your build.gradle
-    - name: Publish to GitHub Packages
+    - name: Publish to Plugin Portal
       run: ./gradlew publishPlugins
       env:
         GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
