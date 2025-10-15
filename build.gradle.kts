@@ -8,7 +8,7 @@ repositories {
 }
 
 group = "io.github.codicis"
-version = "0.1-SNAPSHOT"
+version = "0.2"
 
 dependencies {
     testImplementation(gradleTestKit())
