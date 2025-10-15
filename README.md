@@ -21,17 +21,18 @@ asn1 {
     // Set the ASN.1 compiler version
     version = "1.14.0"
 
-    // Define target package name for generated classes
-    packageName.set("com.example.generated")
+    tasks {
+        register("taskName"){
+            // Define target package name for generated classes
+            packageName.set("com.example.generated")
 
-    // Provide input ASN.1 source files
-    sourceFiles.setFrom(fileTree("src/main/asn1"))
-
-    // Specify the compiler JAR path (Only if you really must owewrite default)
-    compilerClasspath.setFrom(files("libs/asn1bean-compiler-${version.get()}.jar"))
-
-    // Set the output directory for generated Java classes
-    outputDirectory.set(layout.buildDirectory.dir("generated/asn1"))
+            // Provide input ASN.1 source files
+            sourceFiles.setFrom(fileTree("src/main/asn1"))
+            
+            // Override if you need a custom output directory for generated Java classes
+            outputDirectory.set(layout.buildDirectory.dir("generated/asn1"))
+        }
+    }
 }
 ```
 
