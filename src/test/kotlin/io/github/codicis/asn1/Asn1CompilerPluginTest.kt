@@ -29,10 +29,13 @@ class Asn1CompilerPluginTest {
             }
             asn1 {
                 version.set("1.14.0")
-                packageName.set("$packageName")
-                sourceFiles.setFrom(fileTree("src/main/asn1") { include("**/*.asn1") })
-                compilerClasspath.setFrom(configurations.getByName("asn1Compiler"))
-                outputDirectory.set(layout.buildDirectory.dir("$outputDirectory"))
+                tasks {
+                    register("asn1Compile"){
+                        packageName.set("$packageName")
+                        sourceFiles.setFrom(fileTree("src/main/asn1") { include("**/*.asn1") })
+                        outputDirectory.set(layout.buildDirectory.dir("$outputDirectory"))
+                    }
+                }
             }
             """.trimIndent()
         )
@@ -47,7 +50,7 @@ class Asn1CompilerPluginTest {
         File(testProjectDir, "src/main/asn1/example.asn1")
             .writeText(
                 """
-                UserProfile DEFINITIONS ::= BEGIN
+                UserTypes DEFINITIONS ::= BEGIN
 
                 User ::= SEQUENCE {
                     id            INTEGER,
@@ -59,7 +62,19 @@ class Asn1CompilerPluginTest {
                 END
             """.trimIndent()
             )
+        File(testProjectDir, "src/main/asn1/example2.asn1")
+            .writeText(
+                """
+                UserProfile DEFINITIONS ::= BEGIN
+                IMPORTS User FROM UserTypes;
+                Profile ::= SEQUENCE {
+                    user          User
+                }
+                END
+            """.trimIndent()
+            )
     }
+
     @Test
     fun `plugin applies correctly`() {
         writeSettingsFile()
@@ -69,7 +84,8 @@ class Asn1CompilerPluginTest {
         val result = GradleRunner.create()
             .withProjectDir(testProjectDir)
             .withPluginClasspath()
-            .withArguments("tasks")
+            .withArguments("tasks", "--stacktrace")
+            .forwardOutput()
             .build()
 
         assertTrue(result.output.contains("asn1Compile"))
@@ -90,6 +106,7 @@ class Asn1CompilerPluginTest {
 
         assertEquals(TaskOutcome.SUCCESS, result.task(":asn1Compile")?.outcome)
 
-        assertTrue(testProjectDir.resolve("build/$outputDirectory/$packageDir/userprofile/User.java").exists())
+        assertTrue(testProjectDir.resolve("build/$outputDirectory/$packageDir/usertypes/User.java").exists())
+        assertTrue(testProjectDir.resolve("build/$outputDirectory/$packageDir/userprofile/Profile.java").exists())
     }
 }
