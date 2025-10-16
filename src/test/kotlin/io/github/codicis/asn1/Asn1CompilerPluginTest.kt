@@ -29,11 +29,11 @@ class Asn1CompilerPluginTest {
             }
             asn1 {
                 version.set("1.14.0")
-                tasks {
+                model { 
                     register("asn1Compile"){
                         packageName.set("$packageName")
                         sourceFiles.setFrom(fileTree("src/main/asn1") { include("**/*.asn1") })
-                        outputDirectory.set(layout.buildDirectory.dir("$outputDirectory"))
+                        outputDir.set(layout.buildDirectory.dir("$outputDirectory"))
                     }
                 }
             }

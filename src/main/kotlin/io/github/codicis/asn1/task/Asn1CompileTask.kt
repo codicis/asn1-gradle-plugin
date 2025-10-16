@@ -1,11 +1,11 @@
 package io.github.codicis.asn1.task
 
-import io.github.codicis.asn1.model.Asn1TaskConfig
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.tasks.Classpath
-import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.TaskAction
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import javax.inject.Inject
 
@@ -15,12 +15,16 @@ import javax.inject.Inject
  */
 abstract class Asn1CompileTask : DefaultTask() {
 
-    // Reuse the model bean for task inputs/outputs
-    @get:Nested
-    val config: Asn1TaskConfig = project.objects.newInstance(Asn1TaskConfig::class.java, name, project.objects).apply {
-        // Provide a sensible default for the output directory, still overridable from the plugin DSL
-        outputDirectory.convention(project.layout.buildDirectory.dir("generated/sources/${name}/main/java"))
-    }
+    @get:Input
+    abstract val packageName: Property<String>
+
+
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val sourceFiles: ConfigurableFileCollection
+
+    @get:OutputDirectory
+    abstract val outputDir: DirectoryProperty
 
     @get:Inject
     abstract val execOperations: ExecOperations
@@ -29,16 +33,16 @@ abstract class Asn1CompileTask : DefaultTask() {
     abstract val compilerClasspath: ConfigurableFileCollection
 
     init {
-        group = "build"
+        group = "asn1"
         description = "The compiler reads the ASN.1 definitions from the given files and generates Java classes."
     }
 
     @TaskAction
     fun compile() {
-        val outputDir = config.outputDirectory.get().asFile
+        val outputDir = outputDir.get().asFile
         outputDir.mkdirs()
 
-        val asn1Files = config.sourceFiles.files
+        val asn1Files = sourceFiles.files
         if (asn1Files.isEmpty()) {
             logger.warn("No ASN.1 files found to compile.")
             return
@@ -47,7 +51,7 @@ abstract class Asn1CompileTask : DefaultTask() {
 
         val argsList = mutableListOf(
             "-o", outputDir.absolutePath,
-            "-p", config.packageName.get(),
+            "-p", packageName.get(),
             "-e",
             "-f"
         ).apply {

@@ -26,7 +26,7 @@ class Asn1PluginUnitTest {
 
         // Configure DSL programmatically
         val asn1Ext = ext as DefaultAsn1Extension
-        asn1Ext.tasks.register("asn1Compile") {
+        asn1Ext.container().register("asn1Compile") {
             packageName.set("com.example.generated")
         }
 

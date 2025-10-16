@@ -1,9 +1,8 @@
 package io.github.codicis.asn1.plugin
 
 
-import io.github.codicis.asn1.extension.Asn1Extension
 import io.github.codicis.asn1.extension.DefaultAsn1Extension
-import io.github.codicis.asn1.model.Asn1TaskConfig
+import io.github.codicis.asn1.model.ModelSet
 import io.github.codicis.asn1.task.Asn1CompileTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -15,9 +14,10 @@ class Asn1CompilerPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.pluginManager.withPlugin("java") {
+
             val extension = project.extensions.create(
-                Asn1Extension::class.java,
-                "asn1", DefaultAsn1Extension::class.java,
+                "asn1",
+                DefaultAsn1Extension::class.java,
                 project.objects
             )
 
@@ -40,7 +40,7 @@ class Asn1CompilerPlugin : Plugin<Project> {
             }
 
             // Configure tasks for each declared ASN.1 config lazily
-            extension.tasks.all {
+            extension.container().all {
                 configureAsn1Task(project, this, compilerConfiguration)
             }
         }
@@ -48,18 +48,18 @@ class Asn1CompilerPlugin : Plugin<Project> {
 
     private fun configureAsn1Task(
         project: Project,
-        model: Asn1TaskConfig,
+        model: ModelSet,
         compilerConfiguration: Configuration
     ) {
         val taskProvider = project.tasks.register(model.name, Asn1CompileTask::class.java).apply {
             configure {
                 description = "Compile ASN.1 sources for '${model.name}'"
-                group = "build"
+                group = "asn1"
 
                 // Map extension model to task's nested config
-                this.config.sourceFiles.setFrom(model.sourceFiles)
-                this.config.outputDirectory.set(model.outputDirectory)
-                this.config.packageName.set(model.packageName)
+                sourceFiles.setFrom(model.sourceFiles)
+                outputDir.set(model.outputDir)
+                packageName.set(model.packageName)
 
                 compilerClasspath.from(compilerConfiguration)
             }
@@ -70,7 +70,7 @@ class Asn1CompilerPlugin : Plugin<Project> {
             project.extensions.getByType<JavaPluginExtension>()
                 .sourceSets.named("main") {
                     // Register generated sources directory, wired to the task output
-                    java.srcDir(taskProvider.flatMap { it.config.outputDirectory })
+                    java.srcDir(taskProvider.flatMap { it.outputDir })
                 }
         }
     }

@@ -1,6 +1,7 @@
 package io.github.codicis.asn1.extension
 
-import io.github.codicis.asn1.model.Asn1TaskConfig
+import io.github.codicis.asn1.model.ModelSet
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Property
 
@@ -21,5 +22,5 @@ interface Asn1Extension {
     /**
      * Container of ASN.1 task configurations.
      */
-    val tasks: NamedDomainObjectContainer<Asn1TaskConfig>
+    fun model(action: Action<NamedDomainObjectContainer<ModelSet>>)
 }
