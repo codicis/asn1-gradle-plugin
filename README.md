@@ -21,7 +21,7 @@ asn1 {
     // Set the ASN.1 compiler version
     version = "1.14.0"
 
-    tasks {
+    model {
         register("taskName"){
             // Define target package name for generated classes
             packageName.set("com.example.generated")
@@ -30,7 +30,7 @@ asn1 {
             sourceFiles.setFrom(fileTree("src/main/asn1"))
             
             // Override if you need a custom output directory for generated Java classes
-            outputDirectory.set(layout.buildDirectory.dir("generated/asn1"))
+            outputDir.set(layout.buildDirectory.dir("generated/asn1"))
         }
     }
 }
