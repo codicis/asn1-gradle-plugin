@@ -19,7 +19,7 @@ Configure the plugin via the `asn1` extension block:
 ```kotlin
 asn1 {
     // Set the ASN.1 compiler version
-    version = "1.14.0"
+    version = "1.16.0"
 
     model {
         register("taskName"){
