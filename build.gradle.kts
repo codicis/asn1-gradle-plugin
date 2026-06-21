@@ -1,17 +1,16 @@
 plugins {
     `kotlin-dsl`
     `maven-publish`
-    id("com.gradle.plugin-publish") version "1.3.1"
+    id("com.gradle.plugin-publish") version "2.1.1"
 }
 repositories {
     mavenCentral()
 }
 
 group = "io.github.codicis"
-version = "0.3.0"
+version = "0.3.1"
 
 dependencies {
-    testImplementation(gradleTestKit())
     testImplementation("org.junit.jupiter:junit-jupiter:6.0.0")
     testImplementation(kotlin("test"))
 }
