@@ -13,6 +13,7 @@ import javax.inject.Inject
  * Task that compiles ASN.1 definitions into Java sources.
  * Simplified to reuse Asn1TaskConfig for inputs/outputs via a @Nested bean.
  */
+@CacheableTask
 abstract class Asn1CompileTask : DefaultTask() {
 
     @get:Input

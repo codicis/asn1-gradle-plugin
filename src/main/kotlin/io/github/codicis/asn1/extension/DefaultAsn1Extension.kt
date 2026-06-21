@@ -12,7 +12,7 @@ abstract class DefaultAsn1Extension @Inject constructor(
     objects: ObjectFactory
 ) : Asn1Extension {
 
-    override val version: Property<String> = objects.property(String::class.java).convention("1.14.0")
+    override val version: Property<String> = objects.property(String::class.java).convention("1.16.0")
 
     private val modelContainer: ModelSetContainer = ModelSetContainer(objects)
 

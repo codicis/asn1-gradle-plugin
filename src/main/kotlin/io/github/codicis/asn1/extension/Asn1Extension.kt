@@ -13,7 +13,7 @@ interface Asn1Extension {
 
     /**
      * Property to hold the version of the ASN1 compiler.
-     * The default value is set to "1.14.0".
+     * The default value is set to "1.16.0".
      *
      * @return a {@link Property} of type {@link String} representing the version of the ASN1 compiler.
      */

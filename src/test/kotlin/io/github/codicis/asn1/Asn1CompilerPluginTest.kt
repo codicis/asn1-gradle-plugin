@@ -28,7 +28,7 @@ class Asn1CompilerPluginTest {
                 mavenCentral()
             }
             asn1 {
-                version.set("1.14.0")
+                version.set("1.16.0")
                 model { 
                     register("asn1Compile"){
                         packageName.set("$packageName")
